@@ -1,0 +1,170 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Amaze UI Admin index Examples</title>
+  <meta name="description" content="这是一个 index 页面">
+  <meta name="keywords" content="index">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="icon" type="image/png" href="/blog/assets/i/favicon.png">
+  <link rel="apple-touch-icon-precomposed" href="/blog/assets/i/app-icon72x72@2x.png">
+  <meta name="apple-mobile-web-app-title" content="Amaze UI" />
+  <link rel="stylesheet" href="/blog/assets/css/amazeui.min.css"/>
+  <link rel="stylesheet" href="/blog/assets/css/admin.css">
+  <script src="/blog/assets/js/handlebars.min.js"></script>
+  <script type="text/javascript" src="/blog/assets/js/jquerysession.js"></script>
+</head>
+<body>
+<!--[if lte IE 9]>
+<p class="browsehappy">你正在使用<strong>过时</strong>的浏览器，Amaze UI 暂不支持。 请 <a href="http://browsehappy.com/" target="_blank">升级浏览器</a>
+  以获得更好的体验！</p>
+<![endif]-->
+
+<div th:replace="/admin/common::navtop"/>
+
+<div class="am-cf admin-main">
+  <!--引入侧边栏-->
+  <div th:replace="/admin/common::side"></div>
+  <!-- content start -->
+  <div class="admin-content">
+
+    <div class="am-g am-padding">
+      <div class="col-md-6">
+        <div class="am-panel am-panel-default">
+          <div class="am-panel-hd am-cf" data-am-collapse="{target: '#collapse-panel-1'}">后台公告设置<span class="am-icon-chevron-down am-fr" ></span></div>
+          <div class="am-panel-bd am-collapse am-in" id="collapse-panel-1">
+            <form class="am-form" id="anotice_form">
+              <div class="am-form-group">
+                <textarea class="" rows="5" name="anotice"><th:block th:text="${options.get(0).optionValue}"/></textarea>
+                <p><input type="submit" id="btn_anotice" class="am-btn am-btn-default" value="提交修改"/></p>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="am-panel am-panel-default">
+          <div class="am-panel-hd am-cf" data-am-collapse="{target: '#collapse-panel-2'}">前台公告设置<span class="am-icon-chevron-down am-fr" ></span></div>
+          <div id="collapse-panel-2" class="am-panel-bd am-collapse am-in">
+            <form class="am-form" id="pnotice_form">
+              <div class="am-form-group">
+                <textarea class="" rows="5" name="pnotice"><th:block th:text="${options.get(1).optionValue}"/></textarea>
+                <p><input type="submit" id="btn_pnotice" class="am-btn am-btn-default" value="提交修改"/></p>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="am-panel am-panel-default">
+          <div class="am-panel-hd am-cf" data-am-collapse="{target: '#collapse-panel-1'}">网站标题设置<span class="am-icon-chevron-down am-fr" ></span></div>
+          <div class="am-panel-bd am-collapse am-in" id="collapse-panel-3">
+            <form class="am-form" id="title_form">
+              <div class="am-form-group">
+                <textarea class="" rows="5" name="title"><th:block th:text="${options.get(2).optionValue}"/></textarea>
+                <p><input type="submit" id="btn_title" class="am-btn am-btn-default" value="提交修改"/></p>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="am-panel am-panel-default">
+          <div class="am-panel-hd am-cf" data-am-collapse="{target: '#collapse-panel-2'}">网站描述设置<span class="am-icon-chevron-down am-fr" ></span></div>
+          <div id="collapse-panel-4" class="am-panel-bd am-collapse am-in">
+            <form class="am-form" id="desc_form">
+              <div class="am-form-group">
+                <textarea class="" rows="5" name="desc"><th:block th:text="${options.get(3).optionValue}"/></textarea>
+                <p><input type="submit" id="btn_desc" class="am-btn am-btn-default" value="提交修改"/></p>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- content end -->
+
+</div>
+
+<footer>
+  <hr>
+  <p class="am-padding-left">© 2014 AllMobilize, Inc. Licensed under MIT license.</p>
+</footer>
+<script src="/blog/assets/js/zepto.min.js"></script>
+<script src="/blog/assets/js/amazeui.min.js"></script>
+<script src="/blog/assets/js/app.js"></script>
+<script>
+    $(function () {
+        $("#btn_anotice").click(function () {
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/blog/admin/option/update_anotice",
+                data: $("#anotice_form").serialize(),
+                dataType:'json',
+                success:function (result) {
+                    if(result.status==0)
+                        alert("修改成功");
+                    window.location.href = "/blog/admin/setting";
+                },
+                error: function (result) {
+                    alert("修改失败");
+                }
+            });
+        });
+        $("#btn_pnotice").click(function () {
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/blog/admin/option/update_pnotice",
+                data: $("#pnotice_form").serialize(),
+                dataType:'json',
+                success:function (result) {
+                    if(result.status==0)
+                        alert("修改成功");
+                    window.location.href = "/blog/admin/setting";
+                },
+                error: function (result) {
+                    alert("修改失败");
+                }
+            });
+        });
+        $("#btn_title").click(function () {
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/blog/admin/option/update_title",
+                data: $("#title_form").serialize(),
+                dataType:'json',
+                success:function (result) {
+                    if(result.status==0)
+                        alert("修改成功");
+                    window.location.href = "/blog/admin/setting";
+                },
+                error: function (result) {
+                    alert("修改失败");
+                }
+            });
+        });
+        $("#btn_desc").click(function () {
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/blog/admin/option/update_desc",
+                data: $("#desc_form").serialize(),
+                dataType:'json',
+                success:function (result) {
+                    if(result.status==0)
+                        alert("修改成功");
+                    window.location.href = "/blog/admin/setting";
+                },
+                error: function (result) {
+                    alert("修改失败");
+                }
+            });
+        });
+    })
+</script>
+</body>
+</html>

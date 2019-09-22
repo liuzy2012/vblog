@@ -1,0 +1,207 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Amaze UI Admin table Examples</title>
+    <meta name="description" content="这是一个 table 页面">
+    <meta name="keywords" content="table">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="icon" type="image/png" href="/blog/assets/i/favicon.png">
+    <link rel="apple-touch-icon-precomposed" href="/blog/assets/i/app-icon72x72@2x.png">
+    <meta name="apple-mobile-web-app-title" content="Amaze UI" />
+    <link rel="stylesheet" href="/blog/assets/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="/blog/assets/css/admin.css">
+</head>
+<body>
+<!--[if lte IE 9]>
+<p class="browsehappy">你正在使用<strong>过时</strong>的浏览器，Amaze UI 暂不支持。 请 <a href="http://browsehappy.com/" target="_blank">升级浏览器</a>
+    以获得更好的体验！</p>
+<![endif]-->
+
+<div th:replace="/admin/common::navtop"/>
+
+<div class="am-cf admin-main">
+    <!--引入侧边栏-->
+    <div th:replace="/admin/common::side"></div>
+    <!-- sidebar end -->
+
+    <!-- content start -->
+    <div class="admin-content">
+
+        <div class="am-cf am-padding">
+            <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">表单</strong> / <small>form</small></div>
+        </div>
+
+        <div class="am-tabs am-margin" data-am-tabs="{noSwipe: 1}">
+            <ul class="am-tabs-nav am-nav am-nav-tabs">
+                <li><a href="#tab1">用户编辑</a></li>
+            </ul>
+
+            <div class="am-tabs-bd">
+
+                <div class="am-tab-panel am-fade" id="tab1">
+                    <div class="col-sm-12 col-md-4 col-md-push-8">
+                        <div class="am-panel am-panel-default">
+                            <div class="am-panel-bd">
+                                <div class="am-g">
+                                    <div class="col-md-4">
+                                        <img class="am-img-circle am-img-thumbnail" id="show-pic" th:src="${edresp.data.avatar}" alt=""/>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p>使用本地上传头像。 </p>
+                                        <form class="am-form" id="user-pic-upform" enctype="multipart/form-data">
+                                            <input type="hidden" id="id" name="userId" th:value="${edresp.data.id}"/>
+                                            <div class="am-form-group">
+                                                <input type="file" id="pic" name="userPic" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"/>
+                                                <p class="am-form-help">请选择要上传的文件...</p>
+                                                <input type="button" id="btn-up-pic" class="am-btn am-btn-primary am-btn-xs" value="确认修改头像"/>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-8 col-md-pull-4">
+                        <form class="am-form" id="user-edit-form">
+                        <div class="am-g am-margin-top">
+                            <div class="col-sm-2 am-text-right">
+                                用户名
+                            </div>
+                            <div class="col-sm-4">
+                                <input type="text" name="username" class="am-input-sm" th:value="${edresp.data.username}">
+                            </div>
+                            <div class="col-sm-6">*必填，不可重复</div>
+                        </div>
+                        <div class="am-g am-margin-top">
+                            <div class="col-sm-2 am-text-right">
+                                邮箱
+                            </div>
+                            <div class="col-sm-4">
+                                <input type="text" class="am-input-sm" th:value="${edresp.data.email}" disabled="disabled">
+                            </div>
+                            <div class="col-sm-6">*不可更改</div>
+                        </div>
+                        <div class="am-g am-margin-top">
+                            <div class="col-sm-2 am-text-right">
+                                密码
+                            </div>
+                            <div class="col-sm-4 col-end">
+                                <input type="password" class="am-input-sm" name="password" id="pw">
+                            </div>
+
+                        </div>
+                        <div class="am-g am-margin-top">
+                            <div class="col-sm-2 am-text-right">
+                                确认密码
+                            </div>
+                            <div class="col-sm-4 col-end">
+                                <input type="password" class="am-input-sm" id="pw-ag">
+                            </div>
+
+                        </div>
+                            <input type="hidden" name="avatar" id="user-avatar">
+                        <div class="am-g am-margin-top">
+                            <div class="col-sm-2 am-text-right">
+                                用户类别
+                            </div>
+                            <div class="col-sm-4">
+                                <select name="userType">
+                                    <option value="1">管理员</option>
+                                    <option value="2">编辑</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-8"></div>
+                        </div>
+
+                        <div class="am-g am-margin-top-sm">
+                            <div class="col-sm-2 am-text-right">
+                                内容描述
+                            </div>
+                            <div class="col-sm-10">
+                                <textarea rows="10" placeholder="请使用富文本编辑插件"></textarea>
+                            </div>
+                        </div>
+                            <div class="am-margin">
+                                <input type="button" id="btn-edituser" class="am-btn am-btn-primary am-btn-xs" value="提交保存"/>
+                                <button type="button" class="am-btn am-btn-primary am-btn-xs">放弃保存</button>
+                            </div>
+                    </form>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+
+    </div>
+    <!-- content end -->
+</div>
+
+<footer>
+    <hr>
+    <p class="am-padding-left">© 2014 AllMobilize, Inc. Licensed under MIT license.</p>
+</footer>
+
+<script src="/blog/assets/js/zepto.min.js"></script>
+<script src="/blog/assets/js/amazeui.min.js"></script>
+<script src="/blog/assets/js/app.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('.am-alert').alert('close');
+        $("#pw-ag").blur(function () {
+           if($("#pw-ag").val()!=$("#pw").val()){
+               alert("两次密码不一致");
+           }
+        });
+        //图片异步上传
+       $("#btn-up-pic").click(function () {
+           var formData = new FormData($("#user-pic-upform")[0]);
+           formData.append('userId', $('#id').val());
+           formData.append('userPic', $('#pic')[0].files[0]);
+           console.log(formData.toString());
+         $.ajax({
+             async: true,
+             type: 'POST',
+             url: "/blog/user/uploadPic",
+             data: formData,
+             processData: false,//该参数是关闭表单默认封装成对象
+             contentType: false,
+             dataType:'json',
+             success:function (result) {
+                 if(result.status==0)
+                     alert("头像修改成功");
+                 $("#show-pic").attr("src",result.data);
+                 $("#user-avatar").val(result.data);
+             },
+             error: function (result) {
+                 alert("修改失败");
+             }
+         });
+       });
+       $("#btn-edituser").click(function () {
+           var formData=new FormData();
+           $.ajax({
+               async: false,
+               type: 'POST',
+               url: "/blog/user/update/"+[[${edresp.data.id}]],
+               data: $("#user-edit-form").serialize(),
+               dataType:'json',
+               success:function (result) {
+                   if(result.status==0)
+                       alert("修改成功");
+                   window.location.href = "/blog/admin/user";
+               },
+               error: function (result) {
+                   alert("失败");
+               }
+           });
+       });
+    });
+</script>
+</body>
+</html>

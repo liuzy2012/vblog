@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: blog
+  datasource:
+    username: root
+    password: 123zxc
+    url: jdbc:mysql:///blog?serverTimezone=UTC
+server:
+  servlet:
+    context-path: /blog
+logging:
+  level:
+    com.vi3nty.blog.mapper: debug
+
