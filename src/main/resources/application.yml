@@ -5,10 +5,24 @@ spring:
     username: root
     password: 123zxc
     url: jdbc:mysql:///blog?serverTimezone=UTC
+  mail: # MailProperties
+    host: smtp.163.com
+    port: 465
+    username: liuzhaoyang94@163.com
+    password: blog551253
+    protocol: smtps
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
 server:
   servlet:
     context-path: /blog
 logging:
   level:
     com.vi3nty.blog.mapper: debug
+blog:
+  path:
+    domain: http://localhost:8080
 

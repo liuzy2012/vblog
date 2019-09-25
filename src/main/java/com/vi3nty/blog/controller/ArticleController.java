@@ -10,6 +10,8 @@ import com.vladsch.flexmark.convert.html.FlexmarkHtmlParser;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.options.MutableDataSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,6 +34,8 @@ import java.util.Map;
 @Controller
 @RequestMapping("/admin/article")
 public class ArticleController {
+
+    private static final Logger LOGGER=LoggerFactory.getLogger(ArticleController.class);
 
     private static final int pageSize=5;
 

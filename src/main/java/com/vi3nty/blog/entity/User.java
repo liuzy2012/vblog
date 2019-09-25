@@ -28,13 +28,23 @@ public class User {
     private String password;
     @TableField("email")
     private String email;
+    @TableField("salt")
+    private String salt;
+    @TableField("status")
+    private int status;
+    @TableField("activation_code")
+    private String activationCode;
     @TableField("user_type")
     private Integer userType;
     @TableField("avatar")
     private String avatar;
     @TableField("create_date")
     private LocalDateTime createDate;
-
+    public User(){}
+    public User(int id, int status) {
+        this.id = id;
+        this.status = status;
+    }
     public int getId() {
         return id;
     }
@@ -65,6 +75,30 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String getActivationCode() {
+        return activationCode;
+    }
+
+    public void setActivationCode(String activationCode) {
+        this.activationCode = activationCode;
     }
 
     public Integer getUserType() {

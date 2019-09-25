@@ -8,11 +8,17 @@ import com.vi3nty.blog.entity.Role;
 import com.vi3nty.blog.entity.User;
 import com.vi3nty.blog.mapper.UserMapper;
 import com.vi3nty.blog.service.IUserService;
+import com.vi3nty.blog.utils.BlogUtil;
+import com.vi3nty.blog.utils.MailClient;
 import com.vi3nty.blog.utils.ServerResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.util.List;
 
@@ -29,6 +35,18 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     UserMapper userMapper;
+
+    @Autowired
+    private MailClient mailClient;
+
+    @Autowired
+    private TemplateEngine templateEngine;
+
+    @Value("${blog.path.domain}")
+    private String domain;
+
+    @Value("${server.servlet.context-path}")
+    private String path;
 
     @Override
     public ServerResponse<User> userLogin(User user) {
@@ -73,6 +91,48 @@ public class UserServiceImpl implements IUserService {
     @Override
     public int updateUser(User user) {
         return userMapper.updateById(user);
+    }
+
+    @Override
+    public ServerResponse addUser(User user) {
+        if(StringUtils.isBlank(user.getEmail()))
+            return ServerResponse.createByErrorMessage("邮箱不能为空");
+        if(StringUtils.isBlank(user.getUsername()))
+            return ServerResponse.createByErrorMessage("用户名不能为空");
+        if(StringUtils.isBlank(user.getPassword()))
+            return ServerResponse.createByErrorMessage("密码不能为空");
+        //验证账号邮箱是否注册
+        User u=getByEmail(user.getEmail());
+        if(u!=null)
+            return ServerResponse.createByErrorMessage("该邮箱已注册");
+        //注册用户
+        user.setSalt(BlogUtil.generateUUID().substring(0,5));
+        user.setPassword(BlogUtil.md5(user.getPassword()+user.getSalt()));
+        user.setUserType(1);
+        user.setStatus(0);
+        user.setActivationCode(BlogUtil.generateUUID());
+        userMapper.insert(user);
+        //激活邮件
+        Context context=new Context();
+        context.setVariable("email",user.getEmail());
+        context.setVariable("url","http://localhost:8080/blog/active/"+user.getId()+"/"+user.getActivationCode());
+        String content=templateEngine.process("/portal/activation",context);
+        mailClient.sendMail("liuzhaoyang94@163.com","激活账号",content);
+        return ServerResponse.createBySuccess("注册成功",user);
+    }
+
+    /**
+     * 构造函数可减少mysql消耗开支
+     * @param uid
+     * @param code
+     * @return
+     */
+    @Override
+    public int activeUser(int uid,String code) {
+        User user=userMapper.selectById(uid);
+        if(code.equals(user.getActivationCode()))
+            return userMapper.updateById(new User(uid,1));
+        return 0;
     }
 
 }

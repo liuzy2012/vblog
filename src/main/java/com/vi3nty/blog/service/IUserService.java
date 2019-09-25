@@ -27,4 +27,6 @@ public interface IUserService {
     String getPermission(String username);
     User getByEmail(String username);
     int updateUser(User user);
+    ServerResponse addUser(User user);
+    int activeUser(int uid,String code);
 }

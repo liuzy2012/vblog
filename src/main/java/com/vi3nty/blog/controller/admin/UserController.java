@@ -62,7 +62,19 @@ public class UserController {
             return ServerResponse.createByError();
         }
     }
-
+    @PostMapping("/add")
+    @ResponseBody
+    public ServerResponse addUser(User user){
+        return iUserService.addUser(user);
+    }
+    @GetMapping("/{uid}/{code}")
+    @ResponseBody
+    public ServerResponse activeUser(@PathVariable("uid") int uid,@PathVariable("code") String code){
+        int result=iUserService.activeUser(uid,code);
+        if(result==1)
+            return ServerResponse.createBySuccess();
+        return null;
+    }
     @GetMapping("/{uid}")
     public String getUserById(Model model,@PathVariable(name = "uid") int id){
         model.addAttribute("edresp",iUserService.getUserById(id));
