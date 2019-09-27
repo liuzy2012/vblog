@@ -3,6 +3,8 @@ package com.vi3nty.blog.controller.admin;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.google.code.kaptcha.Producer;
+import com.sun.deploy.net.HttpResponse;
 import com.sun.xml.internal.ws.resources.HttpserverMessages;
 import com.vi3nty.blog.entity.User;
 import com.vi3nty.blog.service.IUserService;
@@ -17,12 +19,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -39,7 +41,8 @@ public class UserController {
 
     @Autowired
     private IUserService iUserService;
-
+    @Autowired
+    private Producer producer;
     /**
      * 用户post方法提交登录信息
      * @param user
@@ -47,7 +50,7 @@ public class UserController {
      */
     @PostMapping("/tologin")
     @ResponseBody
-    public ServerResponse<User> login(User user, HttpSession session, HttpserverMessages httpserverMessages){
+    public ServerResponse<User> login(User user, HttpSession session){
         //根据用户名和密码创建Token
         UsernamePasswordToken token=new UsernamePasswordToken(user.getEmail(),user.getPassword());
         //获取subject认证主体
@@ -67,13 +70,29 @@ public class UserController {
     public ServerResponse addUser(User user){
         return iUserService.addUser(user);
     }
-    @GetMapping("/{uid}/{code}")
+    @GetMapping("/active/{uid}/{code}")
     @ResponseBody
     public ServerResponse activeUser(@PathVariable("uid") int uid,@PathVariable("code") String code){
         int result=iUserService.activeUser(uid,code);
         if(result==1)
             return ServerResponse.createBySuccess();
         return null;
+    }
+    @GetMapping("/kaptcha")
+    public void getKaptcha(HttpServletResponse response,HttpSession session){
+        //生成验证码
+        String text=producer.createText();
+        BufferedImage image=producer.createImage(text);
+        //将图片输出给浏览器
+        response.setContentType("image/png");
+        try {
+            session.setAttribute("kap",text);
+            System.out.println("text============="+text);
+            OutputStream os=response.getOutputStream();
+            ImageIO.write(image,"png",os);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     @GetMapping("/{uid}")
     public String getUserById(Model model,@PathVariable(name = "uid") int id){

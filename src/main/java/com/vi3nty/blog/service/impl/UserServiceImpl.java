@@ -10,6 +10,7 @@ import com.vi3nty.blog.mapper.UserMapper;
 import com.vi3nty.blog.service.IUserService;
 import com.vi3nty.blog.utils.BlogUtil;
 import com.vi3nty.blog.utils.MailClient;
+import com.vi3nty.blog.utils.ResponseCode;
 import com.vi3nty.blog.utils.ServerResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,15 +97,15 @@ public class UserServiceImpl implements IUserService {
     @Override
     public ServerResponse addUser(User user) {
         if(StringUtils.isBlank(user.getEmail()))
-            return ServerResponse.createByErrorMessage("邮箱不能为空");
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.EMAIL_BLANK.getCode(),ResponseCode.EMAIL_BLANK.getDesc());
         if(StringUtils.isBlank(user.getUsername()))
-            return ServerResponse.createByErrorMessage("用户名不能为空");
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.USERNAME_BLANK.getCode(),ResponseCode.USERNAME_BLANK.getDesc());
         if(StringUtils.isBlank(user.getPassword()))
-            return ServerResponse.createByErrorMessage("密码不能为空");
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.PASSWORD_BLANK.getCode(),ResponseCode.PASSWORD_BLANK.getDesc());
         //验证账号邮箱是否注册
         User u=getByEmail(user.getEmail());
         if(u!=null)
-            return ServerResponse.createByErrorMessage("该邮箱已注册");
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.EMAIL_REPET.getCode(),ResponseCode.EMAIL_REPET.getDesc());
         //注册用户
         user.setSalt(BlogUtil.generateUUID().substring(0,5));
         user.setPassword(BlogUtil.md5(user.getPassword()+user.getSalt()));
