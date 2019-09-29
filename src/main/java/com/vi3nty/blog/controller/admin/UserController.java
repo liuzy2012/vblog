@@ -87,7 +87,7 @@ public class UserController {
         response.setContentType("image/png");
         try {
             session.setAttribute("kap",text);
-            System.out.println("text============="+text);
+            System.out.println("验证码="+session.getAttribute("kap"));
             OutputStream os=response.getOutputStream();
             ImageIO.write(image,"png",os);
         } catch (IOException e) {
@@ -127,6 +127,7 @@ public class UserController {
         System.out.println("----------------ID="+userId+"      pic="+userPic.getOriginalFilename());
         request.setCharacterEncoding("utf-8");
         response.setHeader("Content-Type", "text/html");
+        //根据当前时间生成随机文件名
         String fileName=System.currentTimeMillis()+userPic.getOriginalFilename().substring(userPic.getOriginalFilename().lastIndexOf("."));
         File imageFolder=new File(request.getServletContext().getRealPath("img/user/"));
         String destFileName=request.getServletContext().getRealPath("img/user/")+File.separator+fileName;
