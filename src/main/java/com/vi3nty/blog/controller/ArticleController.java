@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.vi3nty.blog.entity.Article;
 import com.vi3nty.blog.entity.vo.ArticleVo;
 import com.vi3nty.blog.service.IArticleService;
+import com.vi3nty.blog.utils.SensitiveFilter;
 import com.vi3nty.blog.utils.ServerResponse;
 import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.convert.html.FlexmarkHtmlParser;
@@ -41,10 +42,20 @@ public class ArticleController {
 
     @Autowired
     private IArticleService iArticleService;
-
+    @Autowired
+    private SensitiveFilter sensitiveFilter;
+    /**
+     * 文章发布
+     * @param title
+     * @param content
+     * @param uid
+     * @return
+     */
     @PostMapping("/{uid}/add")
     @ResponseBody
     public ServerResponse add(@RequestParam("title")String title,@RequestParam("content")String content,@PathVariable("uid") Integer uid){
+        //敏感词过滤
+        content=sensitiveFilter.filter(content);
         Article article=new Article();
         article.setTitle(title);
         article.setContent(markToHtml(content));

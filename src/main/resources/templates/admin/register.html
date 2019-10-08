@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>Login Page | Amaze UI Example</title>
+  <link rel="alternate icon" type="image/png" href="/blog/assets/i/favicon.png">
+  <link rel="stylesheet" href="/blog/assets/css/amazeui.min.css"/>
+  <style>
+    .header {
+      text-align: center;
+    }
+    .header h1 {
+      font-size: 200%;
+      color: #333;
+      margin-top: 30px;
+    }
+    .header p {
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+<div class="am-g">
+  <div class="col-md-4 col-sm-centered">
+
+    <h3 class="am-margin-top">用户注册</h3>
+    <hr>
+
+    <form id="registerform" class="am-form">
+      <div class="am-form-group " id="email_div">
+        <label for="email">邮箱:</label>
+        <input type="email" name="email" class="am-form-field" id="email">
+      </div>
+      <br>
+      <div class="am-form-group " id="username_div">
+        <label for="username">用户名（昵称）:</label>
+        <input type="text" name="username" id="username">
+        <br>
+      </div>
+      <div class="am-form-group " id="password_div">
+        <label for="password">密码:</label>
+        <input type="password" name="password" id="password">
+        <br>
+      </div>
+      <div class="am-form-group " id="repassword_div">
+        <label for="repassword">确认密码:</label>
+        <input type="password"  id="repassword">
+        <br>
+      </div>
+      <div class="am-form-group" id="captchaform">
+        <div>
+          <label for="captcha">验证码:</label>
+        </div>
+        <div class="am-g">
+          <div class="col-md-4">
+            <input type="text" id="captcha">
+          </div>
+          <div class="col-md-4 am-align-left">
+            <img id="cap_img" onclick="change_cap()" alt="刷新">
+          </div>
+          <div class="col-md-4">
+          </div>
+        </div>
+        <br>
+      </div>
+      <div class="am-cf">
+        <input type="button" id="register" value="立即注册" class="am-btn am-btn-primary am-btn-block am-btn-sm am-fl">
+      </div>
+    </form>
+    <hr>
+    <p>Licensed under MIT license.</p>
+  </div>
+</div>
+<script src="/blog/assets/js/zepto.min.js"></script>
+<script src="/blog/assets/js/amazeui.min.js"></script>
+<script src="/blog/assets/js/app.js"></script>
+<script  th:inline="javascript">
+    function change_cap(){
+        $("#cap_img").attr("src","/blog/user/kaptcha?p="+Math.random());
+    };
+    $(function () {
+        $("#cap_img").attr("src","/blog/user/kaptcha?p="+Math.random());
+        /*<![CDATA[*/
+        var text=[[${session.kap}]];
+        /*]]>*/
+
+        $("#captcha").blur(function () {
+            console.log(text);
+           if($("#captcha").val()!=text) {
+               $("#register").attr("disabled", true);
+           }
+           else
+               $("#register").attr("disabled",false);
+        });
+        $("#register").click( function (){
+            $.ajax({
+                async: false,
+                type: "POST",
+                url: "/blog/user/add",
+                data: $("#registerform").serialize(),
+                dataType:'json',
+                success:function (result) {
+                    //注册成功
+                    if(result.status==0){
+                        alert(result.msg);
+                        window.location.href = "/blog/admin/index";
+                    }
+                    //邮箱已注册
+                    else if(result.status==21){
+                        console.log(result.msg);
+                        $("#email_div").addClass("am-form-error");
+                    }
+                    else if(result.status==22){
+                        console.log(result.msg);
+                        $("#username_div").addClass("am-form-error");
+                    }
+                    else if(result.status==23){
+                        console.log(result.msg);
+                        $("#password_div").addClass("am-form-error");
+                    }
+                    else if(result.status==24){
+                        console.log(result.msg);
+                        $("#email_div").addClass("am-form-error");
+                    }
+                },
+                error: function (result) {
+
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
