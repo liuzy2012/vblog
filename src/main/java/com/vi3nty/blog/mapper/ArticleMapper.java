@@ -11,12 +11,12 @@ import java.util.List;
 
 public interface ArticleMapper extends BaseMapper<Article> {
 
-    @Select("select ar.id as id,ar.title as title,ar.content as content,ar.cid as cid,c.name as category,u.id as uid,u.username as authName,ar.create_time as create_time from article ar LEFT JOIN category c on ar.cid=c.id LEFT JOIN user u on ar.uid=u.id order by ar.id")
+    @Select("select ar.id as id,ar.title as title,ar.content as content,ar.summary as summary,ar.cid as cid,c.name as category,u.id as uid,u.username as authName,ar.create_time as create_time from article ar LEFT JOIN category c on ar.cid=c.id LEFT JOIN user u on ar.uid=u.id order by ar.id")
     IPage<ArticleVo> getArticlesPage(IPage iPage);
 
-    @Select("select ar.id as id,ar.title as title,ar.content as content,ar.cid as cid,c.name as category,u.id as uid,u.username as authName,ar.create_time as create_time from article ar LEFT JOIN category c on ar.cid=c.id LEFT JOIN user u on ar.uid=u.id where ar.id=#{aid}")
+    @Select("select ar.id as id,ar.title as title,ar.content as content,ar.summary as summary,ar.cid as cid,c.name as category,u.id as uid,u.username as authName,ar.create_time as create_time from article ar LEFT JOIN category c on ar.cid=c.id LEFT JOIN user u on ar.uid=u.id where ar.id=#{aid}")
     ArticleVo getArticleVoById(int aid);
 
-    @Select("select ar.id as id,ar.title as title,ar.content as content,ar.cid as cid,c.name as category,u.id as uid,u.username as authName,ar.create_time as create_time from article ar LEFT JOIN category c on ar.cid=c.id LEFT JOIN user u on ar.uid=u.id where ar.cid=#{cid} order by ar.id")
+    @Select("select ar.id as id,ar.title as title,ar.content as content,ar.summary as summary,ar.cid as cid,c.name as category,u.id as uid,u.username as authName,ar.create_time as create_time from article ar LEFT JOIN category c on ar.cid=c.id LEFT JOIN user u on ar.uid=u.id where ar.cid=#{cid} order by ar.id")
     List<ArticleVo> getArticlesPageByCid(@Param("cid") int cid, IPage iPage);
 }

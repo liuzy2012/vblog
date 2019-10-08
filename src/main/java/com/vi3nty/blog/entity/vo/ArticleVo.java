@@ -8,6 +8,7 @@ public class ArticleVo {
     private String content;
     private int cid;
     private String category;
+    private String summary;
     private int uid;
     private String authName;
     private Date createTime;
@@ -50,6 +51,14 @@ public class ArticleVo {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
     public int getUid() {

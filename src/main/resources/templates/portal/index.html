@@ -75,12 +75,12 @@
         <h4 class="am-article-meta blog-meta"><span class="am-icon-user"/>&nbsp;<a href="" th:text="${art.authName}"></a>&nbsp;&nbsp;&nbsp;<span class="am-icon-clock-o"/>&nbsp;<th:block th:text="${#dates.format(art.createTime, 'yyyy-MM-dd')}"/>&nbsp;&nbsp;&nbsp;<span class="am-icon-tags"/>&nbsp;测试标签</h4>
 
         <div class="am-g blog-content">
-          <div class="col-lg-7" th:utext="${art.content}">
+          <div class="col-lg-7" th:utext="${art.summary}">
 
           </div>
-          <div class="col-lg-5">
-            <p><img src="http://f.cl.ly/items/451O3X0g47320D203D1B/不夠活潑.jpg"></p>
-          </div>
+          <!--<div class="col-lg-5">-->
+            <!--<p><img src="http://f.cl.ly/items/451O3X0g47320D203D1B/不夠活潑.jpg"></p>-->
+          <!--</div>-->
         </div>
       </article>
       <hr class="am-article-divider blog-hr">

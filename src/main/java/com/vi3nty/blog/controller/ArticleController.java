@@ -4,13 +4,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.vi3nty.blog.entity.Article;
 import com.vi3nty.blog.entity.vo.ArticleVo;
 import com.vi3nty.blog.service.IArticleService;
+import com.vi3nty.blog.utils.HtmlParse;
 import com.vi3nty.blog.utils.SensitiveFilter;
 import com.vi3nty.blog.utils.ServerResponse;
-import com.vladsch.flexmark.ast.Node;
-import com.vladsch.flexmark.convert.html.FlexmarkHtmlParser;
-import com.vladsch.flexmark.html.HtmlRenderer;
-import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.util.options.MutableDataSet;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,6 +40,8 @@ public class ArticleController {
     private IArticleService iArticleService;
     @Autowired
     private SensitiveFilter sensitiveFilter;
+    @Autowired
+    private HtmlParse htmlParse;
     /**
      * 文章发布
      * @param title
@@ -53,12 +51,17 @@ public class ArticleController {
      */
     @PostMapping("/{uid}/add")
     @ResponseBody
-    public ServerResponse add(@RequestParam("title")String title,@RequestParam("content")String content,@PathVariable("uid") Integer uid){
+    public ServerResponse add(@RequestParam("title")String title,@RequestParam("content")String content,@RequestParam("summary")String summary,@PathVariable("uid") Integer uid){
         //敏感词过滤
         content=sensitiveFilter.filter(content);
         Article article=new Article();
         article.setTitle(title);
-        article.setContent(markToHtml(content));
+        article.setContent(htmlParse.markToHtml(content));
+        if(StringUtils.isNotBlank(summary))
+            article.setSummary(summary);
+        else{
+            article.setSummary(htmlParse.htmlToText(htmlParse.markToHtml(content)).substring(0,30)+"...");
+        }
         article.setUid(uid);
         int result=iArticleService.addArticle(article);
         if(result==1)
@@ -69,7 +72,7 @@ public class ArticleController {
     @PostMapping("/{aid}/update")
     @ResponseBody
     public ServerResponse update(Article article){
-        article.setContent(markToHtml(article.getContent()));
+        article.setContent(htmlParse.markToHtml(article.getContent()));
         int result=iArticleService.updateArt(article);
         if(result==1)
             return ServerResponse.createBySuccess();
@@ -91,7 +94,7 @@ public class ArticleController {
     @GetMapping("/edit/{aid}")
     public String articleDetail(Model model,@PathVariable("aid") int aid){
         ArticleVo articleVo=iArticleService.getArticleVoById(aid);
-        articleVo.setContent(htmlToMark(articleVo.getContent()));
+        articleVo.setContent(htmlParse.htmlToMark(articleVo.getContent()));
         model.addAttribute("art",articleVo);
         return "admin/admin-editart";
     }
@@ -131,15 +134,6 @@ public class ArticleController {
         }
         return map;
     }
-    private String markToHtml(String content){
-        MutableDataSet options = new MutableDataSet();
-        Parser parser = Parser.builder(options).build();
-        HtmlRenderer renderer = HtmlRenderer.builder(options).build();
-        Node document = parser.parse(content);
-        return renderer.render(document);
-    }
-    public String htmlToMark(String content){
-        return FlexmarkHtmlParser.parse(content);
-    }
+
 
 }
