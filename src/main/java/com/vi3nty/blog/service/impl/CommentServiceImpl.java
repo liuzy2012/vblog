@@ -7,6 +7,7 @@ import com.vi3nty.blog.entity.Comment;
 import com.vi3nty.blog.entity.vo.CommentVo;
 import com.vi3nty.blog.mapper.CommentMapper;
 import com.vi3nty.blog.service.ICommentService;
+import com.vi3nty.blog.utils.ServerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +23,27 @@ public class CommentServiceImpl implements ICommentService {
     private CommentMapper commentMapper;
     @Override
     public IPage<CommentVo> allComments(int currentPage, int pageSize) {
-        IPage<Article> page=new Page<>(currentPage,pageSize);
+        IPage<CommentVo> page=new Page<>(currentPage,pageSize);
         return commentMapper.getAllComment(page);
+    }
+
+    @Override
+    public IPage<CommentVo> getCommentsByAid(int aid, int currentPage, int pageSize) {
+        IPage<CommentVo> page=new Page<>(currentPage,pageSize);
+        return commentMapper.getCommentByAid(page,aid);
     }
 
     @Override
     public int delComment(int id) {
         return commentMapper.deleteById(id);
+    }
+
+    @Override
+    public ServerResponse postComment(int aid, Comment comment) {
+        comment.setAid(aid);
+        int result=commentMapper.insert(comment);
+        if (result==1)
+            return ServerResponse.createBySuccess();
+        return ServerResponse.createByError();
     }
 }

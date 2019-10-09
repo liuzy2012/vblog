@@ -108,7 +108,11 @@ xmlns:th="http://www.thymeleaf.org">
           <div th:utext="${art.content}"/>
         </div>
         <hr/>
-        <ul class="am-comments-list">
+
+        <div th:if="${comments.records.size()==0}">
+          <p>暂无评论</p>
+        </div>
+        <ul class="am-comments-list" th:each="comment:${comments.records}">
           <li class="am-comment">
             <a href="#link-to-user-home">
               <img src="http://amui.qiniudn.com/bw-2014-06-19.jpg?imageView/1/w/96/h/96" alt="" class="am-comment-avatar" width="48" height="48">
@@ -120,43 +124,28 @@ xmlns:th="http://www.thymeleaf.org">
                 </div>
               </header>
               <div class="am-comment-bd">
-                <p>《永远的蝴蝶》一文，还吸收散文特长，多采用第一人称，淡化情节，体现一种思想寄托和艺术追求。</p>
+                <p th:text="${comment.content}"></p>
               </div>
             </div>
           </li>
-          <li class="am-comment">
-            <a href="#link-to-user-home">
-              <img src="http://www.gravatar.com/avatar/1ecedeede84a44f371b9d8d656bb4265?d=mm&amp;s=96" alt="" class="am-comment-avatar" width="48" height="48">
-            </a>
-            <div class="am-comment-main">
-              <header class="am-comment-hd">
-                <div class="am-comment-meta">
-                  <a href="#link-to-user" class="am-comment-author">路人甲</a> 评论于 <time datetime="2013-07-27T04:54:29-07:00" title="2013年7月27日 下午7:54 格林尼治标准时间+0800">2014-7-13 0:03</time>
-                </div>
-              </header>
-              <div class="am-comment-bd">
-                <p>感觉仿佛是自身的遭遇一样，催人泪下</p>
-              </div>
-            </div>
-          </li>
+          <hr/>
         </ul>
+        <div class="am-comment">
+          <form class="am-form" id="comm_post">
+            <div class="am-form-group">
+              <label for="doc-ipt-email-1">请输入邮件</label>
+              <input type="email" name="commEmail" id="doc-ipt-email-1" placeholder="输入电子邮件">
+            </div>
+            <div class="am-form-group">
+              <label for="comment_content">请输入评论</label>
+              <textarea name="content" id="comment_content" placeholder="输入评论内容..."></textarea>
+            </div>
+            <p><input type="submit" class="am-btn am-btn-default" value="发表评论"/></p>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-  <!--<div class="col-md-3 col-md-pull-9 my-sidebar">-->
-    <!--<div class="am-offcanvas" id="sidebar">-->
-      <!--<div class="am-offcanvas-bar">-->
-        <!--<ul class="am-nav">-->
-          <!--<li><a href="#">永远的蝴蝶</a></li>-->
-          <!--<li class="am-nav-header">目录</li>-->
-          <!--<li><a href="#">原文</a></li>-->
-          <!--<li><a href="#">作者简介</a></li>-->
-          <!--<li><a href="#">文章赏析</a></li>-->
-          <!--<li><a href="#">读者评论</a></li>-->
-        <!--</ul>-->
-      <!--</div>-->
-    <!--</div>-->
-  <!--</div>-->
   <a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button" data-am-offcanvas><span class="am-sr-only">侧栏导航</span></a>
 </div>
 
@@ -165,5 +154,8 @@ xmlns:th="http://www.thymeleaf.org">
 </footer>
 <script src="/blog/assets/js/zepto.min.js"></script>
 <script src="/blog/assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+
+</script>
 </body>
 </html>

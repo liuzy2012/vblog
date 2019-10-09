@@ -6,6 +6,7 @@ import com.vi3nty.blog.entity.Article;
 import com.vi3nty.blog.entity.vo.ArticleVo;
 import com.vi3nty.blog.mapper.ArticleMapper;
 import com.vi3nty.blog.service.IArticleService;
+import com.vi3nty.blog.utils.ServerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +17,18 @@ public class ArticleServiceImpl implements IArticleService {
 
     @Autowired
     private ArticleMapper articleMapper;
+
+    /**
+     * 添加文章
+     * @param article controller层封装来的article对象
+     * @return
+     */
     @Override
-    public int addArticle(Article article) {
+    public ServerResponse addArticle(Article article) {
         int result=articleMapper.insert(article);
-        return result;
+        if(result==1)
+            return ServerResponse.createBySuccess();
+        return ServerResponse.createByError();
     }
 
 

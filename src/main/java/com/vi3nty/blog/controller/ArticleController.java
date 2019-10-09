@@ -63,11 +63,7 @@ public class ArticleController {
             article.setSummary(htmlParse.htmlToText(htmlParse.markToHtml(content)).substring(0,30)+"...");
         }
         article.setUid(uid);
-        int result=iArticleService.addArticle(article);
-        if(result==1)
-            return ServerResponse.createBySuccess();
-        else
-            return ServerResponse.createByError();
+        return iArticleService.addArticle(article);
     }
     @PostMapping("/{aid}/update")
     @ResponseBody
