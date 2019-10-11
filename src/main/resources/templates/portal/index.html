@@ -72,7 +72,7 @@
         <h3 class="am-article-title blog-title">
           <a th:href="@{'/portal/detail/'+${art.id}}" th:text="${art.title}"></a>
         </h3>
-        <h4 class="am-article-meta blog-meta"><span class="am-icon-user"/>&nbsp;<a href="" th:text="${art.authName}"></a>&nbsp;&nbsp;&nbsp;<span class="am-icon-clock-o"/>&nbsp;<th:block th:text="${#dates.format(art.createTime, 'yyyy-MM-dd')}"/>&nbsp;&nbsp;&nbsp;<span class="am-icon-tags"/>&nbsp;测试标签</h4>
+        <h4 class="am-article-meta blog-meta"><span class="am-icon-user"/>&nbsp;<a href="" th:text="${art.authName}"></a>&nbsp;&nbsp;&nbsp;<span class="am-icon-clock-o"/>&nbsp;<th:block th:text="${#dates.format(art.createTime, 'yyyy-MM-dd')}"/>&nbsp;&nbsp;&nbsp;<span class="am-icon-tags"/>&nbsp;测试标签&nbsp;&nbsp;&nbsp;</h4>
 
         <div class="am-g blog-content">
           <div class="col-lg-7" th:utext="${art.summary}">

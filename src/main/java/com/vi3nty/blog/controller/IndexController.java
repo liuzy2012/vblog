@@ -1,6 +1,7 @@
 package com.vi3nty.blog.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpSession;
@@ -33,5 +34,10 @@ public class IndexController {
     @RequestMapping("/register")
     public String toregister(){
         return "admin/register";
+    }
+
+    @GetMapping("/error")
+    public String getErrorPage(){
+        return "error/500";
     }
 }

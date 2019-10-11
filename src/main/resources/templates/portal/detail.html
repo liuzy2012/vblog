@@ -96,7 +96,7 @@ xmlns:th="http://www.thymeleaf.org">
 <header class="am-g my-head">
   <div class="col-sm-12 am-article">
     <h1 class="am-article-title" th:text="${art.title}"></h1>
-    <p class="am-article-meta" th:text="${art.authName}"></p>
+    <p class="am-article-meta"><span class="am-icon-user"/>&nbsp;<th:block th:text="${art.authName}"/>&nbsp;&nbsp;&nbsp;<a class="am-icon-heart-o" id="like"></a></p>
   </div>
 </header>
 <hr class="am-article-divider"/>
@@ -154,8 +154,62 @@ xmlns:th="http://www.thymeleaf.org">
 </footer>
 <script src="/blog/assets/js/zepto.min.js"></script>
 <script src="/blog/assets/js/amazeui.min.js"></script>
-<script type="text/javascript">
-
+<script src="/blog/assets/js/jquery-3.3.1.js"></script>
+<script src="/blog/assets/js/jquerysession.js"></script>
+<script th:inline="javascript">
+  $(function () {
+      var user=[[${session.userlogin}]];
+      if(user!=null) {
+          $.ajax({
+              async: false,
+              type: 'POST',
+              url: "/blog/islike",
+              data: {
+                  entityType: 1,
+                  entityId: [[${art.id}]]
+              },
+              dataType: 'json',
+              success: function (result) {
+                  if (result.status == 0 && result.data.likeStatus == 1) {
+                      $("#like").attr("class", "am-icon-heart");
+                  }
+              },
+              error: function (result) {
+                  alert("失败");
+              }
+          });
+      }
+  });
+  $("#like").click(function () {
+      //检查用户是否登录
+      var user=[[${session.userlogin}]];
+      console.log(user);
+      if(user==null)
+          alert("用户未登录");
+      else {
+          $.ajax({
+              async: false,
+              type: 'POST',
+              url: "/blog/like",
+              data: {
+                  entityType:1,
+                  entityId:[[${art.id}]]
+              },
+              dataType:'json',
+              success:function (result) {
+                  if(result.status==0){
+                      if(result.data.likeStatus == 1)
+                        $("#like").attr("class","am-icon-heart");
+                      if(result.data.likeStatus == 0)
+                          $("#like").attr("class","am-icon-heart-o");
+                  }
+              },
+              error: function (result) {
+                  alert("失败");
+              }
+          });
+      }
+  });
 </script>
 </body>
 </html>

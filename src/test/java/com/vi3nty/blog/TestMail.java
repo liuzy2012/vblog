@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -30,6 +31,19 @@ public class TestMail {
     @Test
     public void testSensitive(){
         System.out.println(sensitiveFilter.filter("我今晚去操你妈"));
+    }
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+    @Test
+    public void testRedis(){
+        String redisKey="test:count";
+        redisTemplate.opsForValue().set(redisKey,1);
+
+        System.out.println(redisTemplate.opsForValue().get(redisKey));
+
+        System.out.println(redisTemplate.opsForValue().increment(redisKey));
+        System.out.println(redisTemplate.opsForValue().decrement(redisKey));
     }
 
 }

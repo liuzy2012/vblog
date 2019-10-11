@@ -16,6 +16,11 @@ spring:
         smtp:
           ssl:
             enable: true
+  redis:
+    database: 11
+    host: 192.168.134.132
+    port: 6379
+    password:
 server:
   servlet:
     context-path: /blog
