@@ -1,18 +1,21 @@
 package com.vi3nty.blog.controller.admin;
 
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.google.code.kaptcha.Producer;
 import com.sun.deploy.net.HttpResponse;
 import com.sun.xml.internal.ws.resources.HttpserverMessages;
 import com.vi3nty.blog.entity.User;
 import com.vi3nty.blog.service.IUserService;
+import com.vi3nty.blog.utils.BlogUtil;
+import com.vi3nty.blog.utils.RedisKeyUtil;
 import com.vi3nty.blog.utils.ServerResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,12 +23,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -43,26 +48,44 @@ public class UserController {
     private IUserService iUserService;
     @Autowired
     private Producer producer;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
     /**
      * 用户post方法提交登录信息
-     * @param user
      * @return
      */
     @PostMapping("/tologin")
     @ResponseBody
-    public ServerResponse<User> login(User user, HttpSession session){
-        //根据用户名和密码创建Token
-        UsernamePasswordToken token=new UsernamePasswordToken(user.getEmail(),user.getPassword());
-        //获取subject认证主体
-        Subject subject=SecurityUtils.getSubject();
-        try {
-            //开始认证
-            subject.login(token);
-            User loginUser=iUserService.userLogin(user).getData();
-            session.setAttribute("userlogin",loginUser);
-            return iUserService.userLogin(user);
-        }catch (Exception e){
-            return ServerResponse.createByError();
+    public ServerResponse<User> login(String email,String password,String kaptcha,@CookieValue("kaptchaOwner") String kaptchaOwner, HttpSession session){
+        User user=new User(password,email);
+        String code=null;
+        if(StringUtils.isNotEmpty(kaptchaOwner)) {
+            String redisKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
+            code = (String) redisTemplate.opsForValue().get(redisKey);
+            System.out.println("输入的验证码为="+kaptcha+"  系统中验证码为="+code);
+            if(StringUtils.equalsIgnoreCase(code,kaptcha)) {
+                //根据用户名和密码创建Token
+                UsernamePasswordToken token = new UsernamePasswordToken(user.getEmail(), user.getPassword());
+                //获取subject认证主体
+                Subject subject = SecurityUtils.getSubject();
+                try {
+                    //开始认证
+                    subject.login(token);
+                    User loginUser = iUserService.userLogin(user).getData();
+                    session.setAttribute("userlogin", loginUser);
+                    return iUserService.userLogin(user);
+                } catch (Exception e) {
+                    return ServerResponse.createByError();
+                }
+            }
+            else
+                return ServerResponse.createBySuccessMessage("验证码错误");
+        }
+        else {
+            return ServerResponse.createByErrorMessage("请输入验证码");
         }
     }
     @PostMapping("/add")
@@ -79,15 +102,21 @@ public class UserController {
         return null;
     }
     @GetMapping("/kaptcha")
-    public void getKaptcha(HttpServletResponse response,HttpSession session){
+    public void getKaptcha(HttpServletResponse response){
         //生成验证码
         String text=producer.createText();
         BufferedImage image=producer.createImage(text);
         //将图片输出给浏览器
         response.setContentType("image/png");
+        //将验证码存入redis
+        String kaptchaOwner=BlogUtil.generateUUID();
+        Cookie cookie=new Cookie("kaptchaOwner",kaptchaOwner);
+        cookie.setMaxAge(60);
+        cookie.setPath(contextPath);
+        response.addCookie(cookie);
+        String redisKey=RedisKeyUtil.getKaptchaKey(kaptchaOwner);
+        redisTemplate.opsForValue().set(redisKey,text,60,TimeUnit.SECONDS);
         try {
-            session.setAttribute("kap",text);
-            System.out.println("验证码="+session.getAttribute("kap"));
             OutputStream os=response.getOutputStream();
             ImageIO.write(image,"png",os);
         } catch (IOException e) {

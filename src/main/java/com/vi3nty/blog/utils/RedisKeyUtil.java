@@ -8,6 +8,8 @@ public class RedisKeyUtil {
 
     private static final String SPLIT=":";
     private static final String PREFIX_ENTITY_LIKE="like:entity";
+    private static final String PREFIX_KAPTCHA="kaptcha";
+    private static final String PREFIX_TICKET="ticket";
 
     /**
      * 采用redis中set数据类型
@@ -21,4 +23,21 @@ public class RedisKeyUtil {
         return PREFIX_ENTITY_LIKE+SPLIT+entityType+SPLIT+entityId;
     }
 
+    /**
+     * 用户登录验证码
+     * @param owner 用户临时身份凭证
+     * @return
+     */
+    public static String getKaptchaKey(String owner){
+        return PREFIX_KAPTCHA+SPLIT+owner;
+    }
+
+    /**
+     * 登录凭证
+     * @param ticket
+     * @return
+     */
+    public static String getTicketKey(String ticket){
+        return PREFIX_KAPTCHA+SPLIT+ticket;
+    }
 }

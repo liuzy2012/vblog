@@ -41,14 +41,20 @@ public class LikeController {
     @ResponseBody
     public ServerResponse<Map<String,Object>> isLike(HttpSession session,int entityType, int entityId){
         User user= (User) session.getAttribute("userlogin");
-        //数量
-        long likeCount=iLikeService.getEntityLikeCount(entityType,entityId);
-        //状态
-        int likeStatus=iLikeService.findEntityLikeStatus(user.getId(),entityType,entityId);
         Map<String,Object> map=new HashMap<>();
-        map.put("likeCount",likeCount);
-        map.put("likeStatus",likeStatus);
-
+        if(user==null){
+            //数量
+            long likeCount=iLikeService.getEntityLikeCount(entityType,entityId);
+            map.put("likeCount",likeCount);
+        }
+        else {
+            //数量
+            long likeCount=iLikeService.getEntityLikeCount(entityType,entityId);
+            //状态
+            int likeStatus=iLikeService.findEntityLikeStatus(user.getId(),entityType,entityId);
+            map.put("likeCount",likeCount);
+            map.put("likeStatus",likeStatus);
+        }
         return ServerResponse.createBySuccess(map);
     }
 }

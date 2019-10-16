@@ -45,6 +45,11 @@ public class User {
         this.id = id;
         this.status = status;
     }
+    public User(String password, String email) {
+        this.password = password;
+        this.email = email;
+    }
+
     public int getId() {
         return id;
     }

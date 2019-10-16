@@ -96,7 +96,7 @@ xmlns:th="http://www.thymeleaf.org">
 <header class="am-g my-head">
   <div class="col-sm-12 am-article">
     <h1 class="am-article-title" th:text="${art.title}"></h1>
-    <p class="am-article-meta"><span class="am-icon-user"/>&nbsp;<th:block th:text="${art.authName}"/>&nbsp;&nbsp;&nbsp;<a class="am-icon-heart-o" id="like"></a></p>
+    <p class="am-article-meta"><span class="am-icon-user"/>&nbsp;<th:block th:text="${art.authName}"/>&nbsp;&nbsp;&nbsp;<a class="am-icon-heart-o" id="like"></a>&nbsp;<a id="like_times"></a></p>
   </div>
 </header>
 <hr class="am-article-divider"/>
@@ -158,8 +158,6 @@ xmlns:th="http://www.thymeleaf.org">
 <script src="/blog/assets/js/jquerysession.js"></script>
 <script th:inline="javascript">
   $(function () {
-      var user=[[${session.userlogin}]];
-      if(user!=null) {
           $.ajax({
               async: false,
               type: 'POST',
@@ -170,15 +168,18 @@ xmlns:th="http://www.thymeleaf.org">
               },
               dataType: 'json',
               success: function (result) {
+                  if(result.status==0){
+                      $("#like_times").text(result.data.likeCount+"次");
+                  }
                   if (result.status == 0 && result.data.likeStatus == 1) {
                       $("#like").attr("class", "am-icon-heart");
+                      $("#like_times").text(result.data.likeCount+"次");
                   }
               },
               error: function (result) {
                   alert("失败");
               }
           });
-      }
   });
   $("#like").click(function () {
       //检查用户是否登录
@@ -198,10 +199,14 @@ xmlns:th="http://www.thymeleaf.org">
               dataType:'json',
               success:function (result) {
                   if(result.status==0){
-                      if(result.data.likeStatus == 1)
+                      if(result.data.likeStatus == 1){
                         $("#like").attr("class","am-icon-heart");
-                      if(result.data.likeStatus == 0)
+                          $("#like_times").text(result.data.likeCount+"次");
+                      }
+                      if(result.data.likeStatus == 0){
                           $("#like").attr("class","am-icon-heart-o");
+                          $("#like_times").text(result.data.likeCount+"次");
+                      }
                   }
               },
               error: function (result) {
