@@ -5,6 +5,7 @@ import com.google.code.kaptcha.Producer;
 import com.sun.deploy.net.HttpResponse;
 import com.sun.xml.internal.ws.resources.HttpserverMessages;
 import com.vi3nty.blog.entity.User;
+import com.vi3nty.blog.service.IMessageService;
 import com.vi3nty.blog.service.IUserService;
 import com.vi3nty.blog.utils.BlogUtil;
 import com.vi3nty.blog.utils.RedisKeyUtil;
@@ -51,6 +52,10 @@ public class UserController {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private IMessageService messageService;
+
     @Value("${server.servlet.context-path}")
     private String contextPath;
     /**
@@ -75,7 +80,9 @@ public class UserController {
                     //开始认证
                     subject.login(token);
                     User loginUser = iUserService.userLogin(user).getData();
+                    int unreadNoticeCount=messageService.selectNoticeUnreadedCount(loginUser.getId(),"comment")+messageService.selectNoticeUnreadedCount(loginUser.getId(),"like");
                     session.setAttribute("userlogin", loginUser);
+                    session.setAttribute("unreadNoticeCount",unreadNoticeCount);
                     return iUserService.userLogin(user);
                 } catch (Exception e) {
                     return ServerResponse.createByError();

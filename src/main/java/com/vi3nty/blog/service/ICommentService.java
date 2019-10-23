@@ -17,4 +17,6 @@ public interface ICommentService {
     IPage<CommentVo> getCommentsByAid(int aid,int currentPage, int pageSize);
     int delComment(int id);
     ServerResponse postComment(int aid, Comment comment);
+    int updateCommentCount(int id,int commentCount);
+    int addComment(Comment comment);
 }

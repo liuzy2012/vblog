@@ -8,4 +8,9 @@ public interface Constant {
 
     //实体类型：评论
     String TOPIC_COMMENT = "comment";
+
+    //实体类型：点赞
+    String TOPIC_LIKE="like";
+    //系统用户ID
+    int SYSTEM_USER_ID=1;
 }

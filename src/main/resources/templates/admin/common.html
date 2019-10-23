@@ -34,7 +34,7 @@ xmlns:th="http://www.thymeleaf.org">
     <div class="am-collapse am-topbar-collapse" id="topbar-collapse">
 
         <ul class="am-nav am-nav-pills am-topbar-nav am-topbar-right admin-header-list">
-            <li><a href="javascript:;"><span class="am-icon-envelope-o"></span> 收件箱 <span class="am-badge am-badge-warning">5</span></a></li>
+            <li><a href="javascript:;"><span class="am-icon-envelope-o"></span> 通知 <th:block th:if="${session.unreadNoticeCount!=0}"><span class="am-badge am-badge-secondary am-margin-right am-fr" th:text="${session.unreadNoticeCount}"></span></th:block></a></li>
             <li class="am-dropdown" data-am-dropdown>
                 <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">
                     <span class="am-icon-users"></span> <span th:text="${session.userlogin.username}"></span> <span class="am-icon-caret-down"></span>
@@ -59,6 +59,12 @@ xmlns:th="http://www.thymeleaf.org">
                 <li><a href="/blog/admin/article/list" class="am-cf"><span class="am-icon-calendar"></span> 文章管理</a></li>
                 <li><a href="/blog/admin/topost" class="am-cf"><span class="am-icon-check"></span> 发布文章<span class="am-icon-star am-fr am-margin-right admin-icon-yellow"></span></a></li>
                 <li><a href="/blog/admin/comments"><span class="am-icon-comments"></span> 评论管理</a></li>
+            </ul>
+        </li>
+        <li class="admin-parent" th:if="${session.userlogin.userType==1}">
+            <a class="am-cf" data-am-collapse="{target: '#collapse-nav_notic'}"><span class="am-icon-gears"></span> 通知模块 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+            <ul class="am-list am-collapse admin-sidebar-sub am-in" id="collapse-nav_notic">
+                <li><a href="/blog/admin/notice/comment"><span class="am-icon-comments"></span> 通知<th:block th:if="${session.unreadNoticeCount!=0}"><span class="am-badge am-badge-secondary am-margin-right am-fr" th:text="${session.unreadNoticeCount}"></span></th:block></a></li>
             </ul>
         </li>
         <li class="admin-parent" th:if="${session.userlogin.userType==1}">

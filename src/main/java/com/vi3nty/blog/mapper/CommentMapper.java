@@ -6,6 +6,7 @@ import com.vi3nty.blog.entity.Comment;
 import com.vi3nty.blog.entity.vo.CommentVo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 

@@ -128,19 +128,19 @@ xmlns:th="http://www.thymeleaf.org">
               </div>
             </div>
           </li>
-          <hr/>
         </ul>
+        <hr>
         <div class="am-comment">
           <form class="am-form" id="comm_post">
-            <div class="am-form-group">
-              <label for="doc-ipt-email-1">请输入邮件</label>
+            <div th:if="${session.userlogin==null}" class="am-form-group">
+              <label for="doc-ipt-email-1">游客：请输入邮件</label>
               <input type="email" name="commEmail" id="doc-ipt-email-1" placeholder="输入电子邮件">
             </div>
             <div class="am-form-group">
               <label for="comment_content">请输入评论</label>
               <textarea name="content" id="comment_content" placeholder="输入评论内容..."></textarea>
             </div>
-            <p><input type="submit" class="am-btn am-btn-default" value="发表评论"/></p>
+            <p><input type="submit" id="comment_post_btn" class="am-btn am-btn-default" value="发表评论"/></p>
           </form>
         </div>
       </div>
@@ -180,6 +180,52 @@ xmlns:th="http://www.thymeleaf.org">
                   alert("失败");
               }
           });
+  });
+  $("#comment_post_btn").click(function () {
+      var content=$("#comment_content").val();
+      //检查用户是否登录
+      var user=[[${session.userlogin}]];
+      //游客评论
+      if(user==null){
+          $.ajax({
+              async:false,
+              type:'POST',
+              url:"/blog/portal/comment/add",
+              data:{
+                  
+              },
+              dataType:"json",
+              success:function (result) {
+                  
+              },
+              error:function (result) {
+                  
+              }
+
+          });
+      }
+      //已登录用户评论
+      else {
+          if(content!=null)
+            $.ajax({
+                async:false,
+                type:'POST',
+                url:"/blog/portal/comment/add",
+                data:{
+                    aid:[[${art.id}]],
+                    entityType:"comment",
+                    content:$("#comment_content").val(),
+                    toUserId:[[${art.uid}]]
+                },
+                dataType:"json",
+                success:function (result) {
+
+                },
+                error:function (result) {
+
+                }
+            })
+      }
   });
   $("#like").click(function () {
       //检查用户是否登录

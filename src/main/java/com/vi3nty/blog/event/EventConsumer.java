@@ -1,8 +1,11 @@
 package com.vi3nty.blog.event;
 
 import com.alibaba.fastjson.JSONObject;
+import com.vi3nty.blog.entity.Comment;
 import com.vi3nty.blog.entity.Event;
+import com.vi3nty.blog.entity.Message;
 import com.vi3nty.blog.service.ICommentService;
+import com.vi3nty.blog.service.IMessageService;
 import com.vi3nty.blog.utils.Constant;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -10,6 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author : vi3nty
@@ -21,9 +27,9 @@ public class EventConsumer implements Constant {
     private static final Logger LOGGER=LoggerFactory.getLogger(EventConsumer.class);
 
     @Autowired
-    private ICommentService iCommentService;
+    private IMessageService iMessageService;
 
-    @KafkaListener(topics = {TOPIC_COMMENT})
+    @KafkaListener(topics = {TOPIC_COMMENT,TOPIC_LIKE})
     public void handleCommentMeaage(ConsumerRecord record){
         if(record==null||record.value()==null){
             LOGGER.error("消息内容为空");
@@ -34,5 +40,23 @@ public class EventConsumer implements Constant {
             LOGGER.error("消息格式错误");
             return;
         }
+        //发送站内通知
+        Message message=new Message();
+        message.setFromId(SYSTEM_USER_ID);
+        message.setToId(event.getEntityUserId());
+        //设置当前通知种类
+        message.setType(event.getTopic());
+        Map<String,Object> map=new HashMap<>();
+        map.put("userId",event.getUserId());
+        map.put("entityType",event.getEntityType());
+        map.put("entityId",event.getEntityId());
+        if(!event.getData().isEmpty()){
+            for(Map.Entry<String,Object> entry:event.getData().entrySet()){
+                map.put(entry.getKey(),entry.getValue());
+            }
+        }
+        message.setContent(JSONObject.toJSONString(map));
+        iMessageService.insertMessage(message);
+
     }
 }

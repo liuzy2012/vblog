@@ -1,14 +1,15 @@
 package com.vi3nty.blog;
 
-import com.vi3nty.blog.utils.MailClient;
-import com.vi3nty.blog.utils.SensitiveFilter;
+import com.vi3nty.blog.service.IMessageService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author : vi3nty
@@ -20,30 +21,20 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class TestMail {
 
     @Autowired
-    private MailClient mailClient;
+    private IMessageService service;
 
     @Test
-    public void testMail(){
-        mailClient.sendMail("liuzhaoyang94@163.com","123","内容222222222");
+    public void changeMsgStatus(){
+        List<Integer> ids=new LinkedList<>();
+        ids.add(1);
+        ids.add(2);
+        ids.add(3);
+        service.updateStatus(ids,1);
     }
-    @Autowired
-    SensitiveFilter sensitiveFilter;
+
     @Test
-    public void testSensitive(){
-        System.out.println(sensitiveFilter.filter("我今晚去操你妈"));
+    public void max(){
+        System.out.println(service.selectNoticeCount(10,"comment"));
+        System.out.println(service.selectNoticeUnreadedCount(10,"comment"));
     }
-
-    @Autowired
-    private RedisTemplate redisTemplate;
-    @Test
-    public void testRedis(){
-        String redisKey="test:count";
-        redisTemplate.opsForValue().set(redisKey,1);
-
-        System.out.println(redisTemplate.opsForValue().get(redisKey));
-
-        System.out.println(redisTemplate.opsForValue().increment(redisKey));
-        System.out.println(redisTemplate.opsForValue().decrement(redisKey));
-    }
-
 }

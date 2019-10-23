@@ -66,12 +66,12 @@ public class ShiroConfig {
         // 登录 URL 放行
         filterChainMap.put("/login", "anon");
 
-        // 以“/admin” 开头的用户需要身份认证，authc 表示要进行身份认证
-        filterChainMap.put("/admin*", "authc");
-        // “/admin” 开头的用户需要角色认证，是“admin”才允许
-        filterChainMap.put("/admin*/**", "roles[admin]");
-        // “/admin” 开头的用户需要权限认证，是“user:create”才允许
-        filterChainMap.put("/admin*/**", "perms[\"admin:create\"]");
+//        // 以“/admin” 开头的用户需要身份认证，authc 表示要进行身份认证
+//        filterChainMap.put("/admin*", "authc");
+//        // “/admin” 开头的用户需要角色认证，是“admin”才允许
+//        filterChainMap.put("/admin*/**", "roles[admin]");
+//        // “/admin” 开头的用户需要权限认证，是“user:create”才允许
+//        filterChainMap.put("/admin*/**", "perms[\"admin:create\"]");
 
         // 配置 logout 过滤器
         filterChainMap.put("/logout", "logout");

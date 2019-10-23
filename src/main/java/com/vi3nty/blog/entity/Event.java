@@ -10,7 +10,7 @@ import java.util.Map;
 public class Event {
     private String topic;
     private int userId;
-    private int entityType;
+    private String entityType;
     private int entityId;
     private int entityUserId;
     private Map<String,Object> data=new HashMap<>();
@@ -32,11 +32,11 @@ public class Event {
         this.userId = userId;
     }
 
-    public int getEntityType() {
+    public String getEntityType() {
         return entityType;
     }
 
-    public void setEntityType(int entityType) {
+    public void setEntityType(String entityType) {
         this.entityType = entityType;
     }
 

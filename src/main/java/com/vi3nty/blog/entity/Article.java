@@ -17,6 +17,8 @@ public class Article {
     private String content;
     @TableField("summary")
     private String summary;
+    @TableField("comment_count")
+    private int commentCount;
     @TableField("create_time")
     private Date createTime;
     @TableField("uid")
@@ -49,6 +51,14 @@ public class Article {
 
     public String getSummary() {
         return summary;
+    }
+
+    public int getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(int commentCount) {
+        this.commentCount = commentCount;
     }
 
     public void setSummary(String summary) {

@@ -1,0 +1,88 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Amaze UI Admin table Examples</title>
+    <meta name="description" content="这是一个 table 页面">
+    <meta name="keywords" content="table">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="icon" type="image/png" href="/blog/assets/i/favicon.png">
+    <link rel="apple-touch-icon-precomposed" href="/blog/assets/i/app-icon72x72@2x.png">
+    <meta name="apple-mobile-web-app-title" content="Amaze UI" />
+    <link rel="stylesheet" href="/blog/assets/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="/blog/assets/css/admin.css">
+    <link rel="stylesheet" href="/blog/assets/css/editormd.css">
+    <script type="text/javascript" src="/blog/assets/js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="/blog/assets/js/jquerysession.js"></script>
+    <script type="text/javascript" src="/blog/assets/js/editormd.min.js"></script>
+    <script type="text/javascript" src="/blog/assets/js/plugins/image-dialog/image-dialog.js"></script>
+    <script type="text/javascript" src="/blog/assets/js/plugins/code-block-dialog/code-block-dialog.js"></script>
+    <script type="text/javascript" src="/blog/assets/js/plugins/table-dialog/table-dialog.js"></script>
+    <script th:inline="javascript">
+        
+    </script>
+</head>
+<body>
+<!--[if lte IE 9]>
+<p class="browsehappy">你正在使用<strong>过时</strong>的浏览器，Amaze UI 暂不支持。 请 <a href="http://browsehappy.com/" target="_blank">升级浏览器</a>
+    以获得更好的体验！</p>
+<![endif]-->
+
+<div th:replace="/admin/common::navtop"/>
+
+<div class="am-cf admin-main">
+    <!--引入侧边栏-->
+    <div th:replace="/admin/common::side"></div>
+    <!-- sidebar end -->
+
+    <!-- content start -->
+    <div class="admin-content">
+        <div data-am-widget="list_news" class="am-list-news am-list-news-default">
+            <!--列表标题-->
+            <div class="am-list-news-hd am-cf">
+                <a href="/blog/admin/notice/comment/detail?type=comment">
+                    <h2>评论<span class="am-badge am-badge-primary" th:text="${comment_detail.get('msgUnreadedCount')}"></span></h2>
+                </a>
+            </div>
+            <div class="am-list-news-bd">
+                <ul class="am-list">
+                    <li class="am-g am-list-item-dated" th:if="${comment_detail.get('msgUnreadedCount')!=0}">
+                        <p><th:block th:text="${comment_detail.get('user')}"></th:block>给你评论了一条消息</p>
+                        <!--<span class="am-list-date" th:text="${comment_detail}"></span>-->
+                    </li>
+                    <li class="am-g am-list-item-dated" th:if="${comment_detail.get('msgUnreadedCount')==0}">
+                        <p>暂无最新评论</p>
+                        <!--<span class="am-list-date" th:text="${comment_detail}"></span>-->
+                    </li>
+                </ul>
+            </div>
+            <div class="am-list-news-hd am-cf">
+                <a href="##">
+                    <h2>点赞<span class="am-badge am-badge-secondary" th:text="${comment_detail.get('msgUnreadedCount')}"></span></h2>
+                </a>
+            </div>
+            <div class="am-list-news-bd">
+                <ul class="am-list">
+                    <li class="am-g am-list-item-dated">
+                        <p><th:block th:text="${comment_detail.get('user')}"></th:block>给你点赞了</p>
+                        <!--<span class="am-list-date" th:text="${comment_detail}"></span>-->
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- content end -->
+</div>
+
+<footer>
+    <hr>
+    <p class="am-padding-left">© 2014 AllMobilize, Inc. Licensed under MIT license.</p>
+</footer>
+<script src="/blog/assets/js/zepto.min.js"></script>
+<script src="/blog/assets/js/amazeui.min.js"></script>
+<script src="/blog/assets/js/app.js"></script>
+</body>
+</html>
