@@ -6,6 +6,8 @@ import com.vi3nty.blog.entity.User;
 import com.vi3nty.blog.event.EventProducer;
 import com.vi3nty.blog.mapper.CommentMapper;
 import com.vi3nty.blog.service.ICommentService;
+import com.vi3nty.blog.service.IMessageService;
+import com.vi3nty.blog.service.IUserService;
 import com.vi3nty.blog.utils.Constant;
 import com.vi3nty.blog.utils.ServerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,7 @@ public class PortalCommentController implements Constant {
     @Autowired
     private EventProducer producer;
 
+
     @PostMapping("/add")
     public ServerResponse addComment(HttpSession session,int aid,String entityType,String content,int toUserId){
         User user= (User) session.getAttribute("userlogin");
@@ -47,6 +50,10 @@ public class PortalCommentController implements Constant {
             event.setEntityType(comment.getEntityType());
             event.setEntityId(comment.getAid());
             producer.fireEvent(event);
+            //获取当前用户未读通知数量
+            int count= (int) session.getAttribute("unreadNoticeCount");
+            session.removeAttribute("unreadNoticeCount");
+            session.setAttribute("unreadNoticeCount",count+1);
             if(result==1)
                 return ServerResponse.createBySuccess();
         }

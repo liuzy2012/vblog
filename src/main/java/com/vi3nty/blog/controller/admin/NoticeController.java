@@ -36,20 +36,34 @@ public class NoticeController implements Constant {
     public String commentsNotice(Model model,HttpSession session){
         User user= (User) session.getAttribute("userlogin");
 
-        //查询评论类通知
+        //查询最近一条评论类通知
         Message message=messageService.selectLastNotice(user.getId(),TOPIC_COMMENT);
+        //查询最近一条点赞类通知
+        Message like_message=messageService.selectLastNotice(user.getId(),TOPIC_LIKE);
         int msgCount=messageService.selectNoticeCount(user.getId(),TOPIC_COMMENT);
+        int likeCount=messageService.selectNoticeCount(user.getId(),TOPIC_LIKE);
         int msgUnreadedCount=messageService.selectNoticeUnreadedCount(user.getId(),TOPIC_COMMENT);
+        int likeUnreadedCount=messageService.selectNoticeUnreadedCount(user.getId(),TOPIC_LIKE);
         Map<String,Object> map=JSONObject.parseObject(message.getContent(),HashMap.class);
+        Map<String,Object> like_map=JSONObject.parseObject(like_message.getContent(),HashMap.class);
         Map<String,Object> msgVo=new HashMap<>();
+        Map<String,Object> like_msgVo=new HashMap<>();
         msgVo.put("msgCount",msgCount);
+        msgVo.put("likeCount",likeCount);
         msgVo.put("msgUnreadedCount",msgUnreadedCount);
-        //给哪位用户
+        like_msgVo.put("likeUnreadedCount",likeUnreadedCount);
+        //最近一条未读评论用户
         msgVo.put("user",userService.getUserById((Integer) map.get("userId")).getData().getUsername());
+        //最近一条未读点赞用户
+        like_msgVo.put("user",userService.getUserById((Integer) like_map.get("userId")).getData().getUsername());
         msgVo.put("entityType",map.get("entityType"));
+        like_msgVo.put("like_entityType",like_map.get("entityType"));
         //用户对哪篇文章的id进行的评论
         msgVo.put("entityId",map.get("entityId"));
+        //用户对哪篇文章的id进行的评论
+        like_msgVo.put("like_entityId",like_map.get("entityId"));
         model.addAttribute("comment_detail",msgVo);
+        model.addAttribute("like_detail",like_msgVo);
         return "admin/admin-comment-notice";
     }
     @GetMapping("/comment/detail")
@@ -58,19 +72,28 @@ public class NoticeController implements Constant {
         List<Message> list=messageService.allUnreadedNotice(user.getId(),type);
         Map<String,Object> map;
         List<MsgInfo> msglist=new LinkedList<>();
+        List<MsgInfo> likelist=new LinkedList<>();
         List<Integer> ids=new LinkedList<>();
         for(Message msg:list){
             MsgInfo msgInfo=new MsgInfo();
             msgInfo.setName(userService.getUserById((Integer) JSONObject.parseObject(msg.getContent(),HashMap.class).get("userId")).getData().getUsername());
             msgInfo.setAid((Integer) JSONObject.parseObject(msg.getContent(),HashMap.class).get("entityId"));
-            msglist.add(msgInfo);
+            if("comment".equals(msg.getType()))
+                msglist.add(msgInfo);
+            else
+                likelist.add(msgInfo);
             ids.add(msg.getId());
         }
-        model.addAttribute("msglist",msglist);
+        if("comment".equals(type))
+            model.addAttribute("msglist",msglist);
+        else
+            model.addAttribute("likelist",likelist);
         //将通知状态设为已读
         int result=messageService.updateStatus(ids,1);
-        if(result==1)
-            session.setAttribute("unreadNoticeCount",0);
+        if(result==1) {
+            session.removeAttribute("unreadNoticeCount");
+            session.setAttribute("unreadNoticeCount", 0);
+        }
         return "admin/admin-comment-notice-detail";
     }
     private class MsgInfo{

@@ -240,7 +240,8 @@ xmlns:th="http://www.thymeleaf.org">
               url: "/blog/like",
               data: {
                   entityType:1,
-                  entityId:[[${art.id}]]
+                  entityId:[[${art.id}]],
+                  a_uid:[[${art.uid}]]
               },
               dataType:'json',
               success:function (result) {

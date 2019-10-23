@@ -60,14 +60,18 @@
                 </ul>
             </div>
             <div class="am-list-news-hd am-cf">
-                <a href="##">
-                    <h2>点赞<span class="am-badge am-badge-secondary" th:text="${comment_detail.get('msgUnreadedCount')}"></span></h2>
+                <a href="/blog/admin/notice/comment/detail?type=like">
+                    <h2>点赞<span class="am-badge am-badge-primary" th:text="${like_detail.get('likeUnreadedCount')}"></span></h2>
                 </a>
             </div>
             <div class="am-list-news-bd">
                 <ul class="am-list">
-                    <li class="am-g am-list-item-dated">
-                        <p><th:block th:text="${comment_detail.get('user')}"></th:block>给你点赞了</p>
+                    <li class="am-g am-list-item-dated" th:if="${like_detail.get('likeUnreadedCount')!=0}">
+                        <p><th:block th:text="${comment_detail.get('user')}"></th:block>点赞了你的一篇文章</p>
+                        <!--<span class="am-list-date" th:text="${comment_detail}"></span>-->
+                    </li>
+                    <li class="am-g am-list-item-dated" th:if="${like_detail.get('likeUnreadedCount')==0}">
+                        <p>暂无最新点赞</p>
                         <!--<span class="am-list-date" th:text="${comment_detail}"></span>-->
                     </li>
                 </ul>
