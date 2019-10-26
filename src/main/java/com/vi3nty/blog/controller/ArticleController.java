@@ -2,8 +2,11 @@ package com.vi3nty.blog.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.vi3nty.blog.entity.Article;
+import com.vi3nty.blog.entity.Event;
 import com.vi3nty.blog.entity.vo.ArticleVo;
+import com.vi3nty.blog.event.EventProducer;
 import com.vi3nty.blog.service.IArticleService;
+import com.vi3nty.blog.utils.Constant;
 import com.vi3nty.blog.utils.HtmlParse;
 import com.vi3nty.blog.utils.SensitiveFilter;
 import com.vi3nty.blog.utils.ServerResponse;
@@ -30,7 +33,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/admin/article")
-public class ArticleController {
+public class ArticleController implements Constant {
 
     private static final Logger LOGGER=LoggerFactory.getLogger(ArticleController.class);
 
@@ -42,6 +45,8 @@ public class ArticleController {
     private SensitiveFilter sensitiveFilter;
     @Autowired
     private HtmlParse htmlParse;
+    @Autowired
+    private EventProducer producer;
     /**
      * 文章发布
      * @param title
@@ -63,7 +68,16 @@ public class ArticleController {
             article.setSummary(htmlParse.htmlToText(htmlParse.markToHtml(content)).substring(0,30)+"...");
         }
         article.setUid(uid);
-        return iArticleService.addArticle(article);
+        ServerResponse response=iArticleService.addArticle(article);
+        //触发发帖事件
+        Event event=new Event();
+        event.setTopic(TOPIC_PUBLISH);
+        event.setUserId(uid);
+        event.setEntityId(article.getId());
+        System.out.println("id========================"+article.getId());
+        producer.fireEvent(event);
+
+        return response;
     }
     @PostMapping("/{aid}/update")
     @ResponseBody
