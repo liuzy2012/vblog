@@ -85,20 +85,15 @@
       </article>
       <hr class="am-article-divider blog-hr">
     </div>
+    <ul class="am-pagination">
+      <li class="am-disabled"><a href="#">«</a></li>
 
-    <ul data-am-widget="pagination" class="am-pagination am-pagination-select">
-        <li class="am-pagination-prev">
-          <a th:disabled="${artlist.current==1}?true" th:href="@{/portal/index(currentPage=${artlist.current}-1)}">上一页</a>
-        </li>
-        <li class="am-pagination-select">
-          <select>
-            <option value="#" class="" th:each="i:${#numbers.sequence(1,artlist.pages)}"><th:block th:text="${i}"/> / <th:block th:text="${artlist.pages}"/></option>
-          </select>
-        </li>
-        <li class="am-pagination-next">
-          <a th:disabled="${artlist.current==artlist.pages}?true" th:href="@{/portal/index(currentPage=${artlist.current}+1)}">下一页</a>
-        </li>
+      <th:block class="am-active" th:each="i:${#numbers.sequence(1,artlist.pages)}">
+        <li><a th:href="@{/portal/index(currentPage=${i})}"  th:text="${i}"></a></li>
+      </th:block>
+
     </ul>
+
   </div>
 
   <div class="col-md-4 blog-sidebar">

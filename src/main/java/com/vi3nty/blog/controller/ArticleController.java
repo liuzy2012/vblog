@@ -61,7 +61,8 @@ public class ArticleController implements Constant {
         content=sensitiveFilter.filter(content);
         Article article=new Article();
         article.setTitle(title);
-        article.setContent(htmlParse.markToHtml(content));
+//        article.setContent(htmlParse.markToHtml(content));
+        article.setContent(content);
         if(StringUtils.isNotBlank(summary))
             article.setSummary(summary);
         else{

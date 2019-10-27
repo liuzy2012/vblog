@@ -10,6 +10,7 @@ import com.vi3nty.blog.service.ICommentService;
 import com.vi3nty.blog.service.IMessageService;
 import com.vi3nty.blog.service.impl.ElasticsearchService;
 import com.vi3nty.blog.utils.Constant;
+import com.vi3nty.blog.utils.HtmlParse;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +81,7 @@ public class EventConsumer implements Constant {
         }
 
         Article post=iArticleService.getArticleById(event.getEntityId());
+        post.setContent(HtmlParse.markToHtml(post.getContent()));
         elasticsearchService.saveArticlePost(post);
 
     }

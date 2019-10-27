@@ -105,7 +105,11 @@ xmlns:th="http://www.thymeleaf.org">
     <div class="am-g">
       <div class="col-sm-11 col-sm-centered">
         <div class="am-cf am-article">
-          <div th:utext="${art.content}"/>
+          <!--<div th:utext="${art.content}"/>-->
+          <div id="test-editormd-view">
+            <!--<textarea id="append-test" ><th:block th:text="${art.content}"/></textarea>-->
+            <textarea style="display:none;"></textarea>
+          </div>
         </div>
         <hr/>
 
@@ -152,13 +156,34 @@ xmlns:th="http://www.thymeleaf.org">
 <footer class="my-footer">
   <p>sidebar template<br><small>© Copyright XXX. by the AmazeUI Team.</small></p>
 </footer>
+<script src="/blog/assets/js/jquery-3.3.1.js"></script>
+<script src="/blog/assets/js/editormd.min.js"></script>
 <script src="/blog/assets/js/zepto.min.js"></script>
 <script src="/blog/assets/js/amazeui.min.js"></script>
-<script src="/blog/assets/js/jquery-3.3.1.js"></script>
-<script src="/blog/assets/js/jquerysession.js"></script>
+<script src="/blog/assets/js/plugins/lib/marked.min.js"></script>
+<script src="/blog/assets/js/plugins/lib/prettify.min.js"></script>
+<script src="/blog/assets/js/plugins/lib/raphael.min.js"></script>
+<script src="/blog/assets/js/plugins/lib/underscore.min.js"></script>
+<script src="/blog/assets/js/plugins/lib/sequence-diagram.min.js"></script>
+<script src="/blog/assets/js/plugins/lib/flowchart.min.js"></script>
+<script src="/blog/assets/js/plugins/lib/jquery.flowchart.min.js"></script>
 <script th:inline="javascript">
-  $(function () {
-          $.ajax({
+   $(function () {
+       var content=[[${art.content}]];
+       var testEditormdView;
+       testEditormdView = editormd.markdownToHTML("test-editormd-view", {
+          markdown        :content,
+          htmlDecode      :true,
+          htmlDecode      : "style,script,iframe",  // you can filter tags decode
+          tocm            : true,
+          emoji           : true,
+          taskList        : true,
+          tex             : true,  // 默认不解析
+          flowChart       : true,  // 默认不解析
+          sequenceDiagram : true,  // 默认不解析
+      });
+
+       $.ajax({
               async: false,
               type: 'POST',
               url: "/blog/islike",

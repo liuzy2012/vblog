@@ -59,14 +59,14 @@ public class HtmlParse {
      * @param content
      * @return
      */
-    public String markToHtml(String content){
+    public static String markToHtml(String content){
         MutableDataSet options = new MutableDataSet();
         Parser parser = Parser.builder(options).build();
         HtmlRenderer renderer = HtmlRenderer.builder(options).build();
         Node document = parser.parse(content);
         return renderer.render(document);
     }
-    public String htmlToMark(String content){
+    public static String htmlToMark(String content){
         return FlexmarkHtmlParser.parse(content);
     }
 }
