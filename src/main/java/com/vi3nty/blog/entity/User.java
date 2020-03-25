@@ -1,6 +1,9 @@
 package com.vi3nty.blog.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -9,6 +12,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * <p>
@@ -19,7 +24,7 @@ import lombok.experimental.Accessors;
  * @since 2019-09-10
  */
 @TableName(value = "user")
-public class User {
+public class User implements UserDetails{
     @TableId(value = "id", type = IdType.AUTO)
     private int id;
     @TableField("username")
@@ -30,6 +35,8 @@ public class User {
     private String email;
     @TableField("salt")
     private String salt;
+    @TableField("isdel")
+    private int isdel;
     @TableField("status")
     private int status;
     @TableField("activation_code")
@@ -62,8 +69,45 @@ public class User {
         return username;
     }
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> list = new ArrayList<>();
+        list.add(new GrantedAuthority() {
+            @Override
+            public String getAuthority() {
+                switch (userType) {
+                    case 1:
+                        return "ADMIN";
+                    default:
+                        return "USER";
+                }
+            }
+        });
+        return list;
     }
 
     public String getPassword() {
@@ -88,6 +132,14 @@ public class User {
 
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+
+    public int getIsdel() {
+        return isdel;
+    }
+
+    public void setIsdel(int isdel) {
+        this.isdel = isdel;
     }
 
     public int getStatus() {

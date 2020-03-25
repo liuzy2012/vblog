@@ -2,7 +2,6 @@ package com.vi3nty.blog.controller;
 
 import com.vi3nty.blog.entity.Event;
 import com.vi3nty.blog.entity.User;
-import com.vi3nty.blog.event.EventProducer;
 import com.vi3nty.blog.service.ILikeService;
 import com.vi3nty.blog.utils.Constant;
 import com.vi3nty.blog.utils.ServerResponse;
@@ -24,8 +23,7 @@ public class LikeController implements Constant {
 
     @Autowired
     private ILikeService iLikeService;
-    @Autowired
-    private EventProducer producer;
+
     @PostMapping("/like")
     @ResponseBody
     public ServerResponse<Map<String,Object>> like(HttpSession session,int entityType, int entityId,int a_uid){
@@ -39,7 +37,6 @@ public class LikeController implements Constant {
         event.setEntityUserId(a_uid);
         event.setEntityType(TOPIC_LIKE);
         event.setEntityId(entityId);
-        producer.fireEvent(event);
         //数量
         long likeCount=iLikeService.getEntityLikeCount(entityType,entityId);
         //状态

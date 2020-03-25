@@ -3,7 +3,6 @@ package com.vi3nty.blog.controller.portal;
 import com.vi3nty.blog.entity.Comment;
 import com.vi3nty.blog.entity.Event;
 import com.vi3nty.blog.entity.User;
-import com.vi3nty.blog.event.EventProducer;
 import com.vi3nty.blog.mapper.CommentMapper;
 import com.vi3nty.blog.service.ICommentService;
 import com.vi3nty.blog.service.IMessageService;
@@ -27,8 +26,6 @@ public class PortalCommentController implements Constant {
 
     @Autowired
     private ICommentService iCommentService;
-    @Autowired
-    private EventProducer producer;
 
 
     @PostMapping("/add")
@@ -49,7 +46,6 @@ public class PortalCommentController implements Constant {
             event.setEntityUserId(toUserId);
             event.setEntityType(comment.getEntityType());
             event.setEntityId(comment.getAid());
-            producer.fireEvent(event);
             //获取当前用户未读通知数量
             int count= (int) session.getAttribute("unreadNoticeCount");
             session.removeAttribute("unreadNoticeCount");

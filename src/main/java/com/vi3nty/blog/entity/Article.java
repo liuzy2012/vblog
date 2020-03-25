@@ -5,37 +5,31 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
+
 
 import java.util.Date;
 
-@Document(indexName = "articlepost",type = "_doc",shards = 6,replicas = 3)
 @TableName(value = "article")
 public class Article {
     @Id
     @TableId(value = "id", type = IdType.AUTO)
     private int id;
-    @Field(type = FieldType.Text,analyzer ="ik_max_word",searchAnalyzer = "ik_smart")
     @TableField("title")
     private String title;
-    @Field(type = FieldType.Text,analyzer ="ik_max_word",searchAnalyzer = "ik_smart")
     @TableField("content")
     private String content;
-    @Field(type = FieldType.Text,analyzer ="ik_max_word",searchAnalyzer = "ik_smart")
+    @TableField("draft")
+    private int draft;
     @TableField("summary")
     private String summary;
-    @Field(type = FieldType.Integer)
+    @TableField("tags")
+    private String tags;
     @TableField("comment_count")
     private int commentCount;
-    @Field(type = FieldType.Date)
     @TableField("create_time")
     private Date createTime;
-    @Field(type = FieldType.Integer)
     @TableField("uid")
     private int uid;
-    @Field(type = FieldType.Integer)
     @TableField("cid")
     private int cid;
 
@@ -77,8 +71,24 @@ public class Article {
         this.content = content;
     }
 
+    public int getDraft() {
+        return draft;
+    }
+
+    public void setDraft(int draft) {
+        this.draft = draft;
+    }
+
     public String getSummary() {
         return summary;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 
     public int getCommentCount() {

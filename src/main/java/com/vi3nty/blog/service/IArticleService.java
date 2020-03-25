@@ -15,4 +15,5 @@ public interface IArticleService {
     ArticleVo getArticleVoById(int id);
     int delete(int id);
     int updateArt(Article article);
+    int updateArticleDraftStatus(int aid,int status);
 }

@@ -21,7 +21,11 @@ public class IndexController {
     public String tologin(HttpSession session){
         if(session.getAttribute("userlogin")!=null)
             return "admin/admin-index";
-        return "admin/login";
+        return "new/admin/login";
+    }
+    @RequestMapping("/wadmin")
+    public String towadmin(){
+        return "new/admin/login";
     }
     @RequestMapping("/ulogout")
     public String logout(HttpSession session){
@@ -30,6 +34,10 @@ public class IndexController {
             return "redirect:/login";
         }
         return "redirect:/login";
+    }
+    @RequestMapping("/noaccess")
+    public String noaccess(){
+        return "new/portal/noaccess";
     }
     @RequestMapping("/register")
     public String toregister(){

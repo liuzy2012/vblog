@@ -8,19 +8,26 @@ import com.vi3nty.blog.entity.Role;
 import com.vi3nty.blog.entity.User;
 import com.vi3nty.blog.mapper.UserMapper;
 import com.vi3nty.blog.service.IUserService;
-import com.vi3nty.blog.utils.BlogUtil;
-import com.vi3nty.blog.utils.MailClient;
-import com.vi3nty.blog.utils.ResponseCode;
-import com.vi3nty.blog.utils.ServerResponse;
+import com.vi3nty.blog.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -32,7 +39,7 @@ import java.util.List;
  * @since 2019-09-10
  */
 @Service
-public class UserServiceImpl implements IUserService {
+public class UserServiceImpl implements UserDetailsService,IUserService, Constant {
 
     @Autowired
     UserMapper userMapper;
@@ -55,14 +62,37 @@ public class UserServiceImpl implements IUserService {
         wrapper.eq("email", user.getEmail());
         wrapper.eq("password", user.getPassword());
         User loginUser = userMapper.selectOne(wrapper);
-        if (loginUser != null)
+        if (loginUser != null) {
+            Authentication authentication=new UsernamePasswordAuthenticationToken(
+                    user,user.getPassword(),this.getAuthorities(user.getId()));
+            SecurityContextHolder.setContext(new SecurityContextImpl(authentication));
             return ServerResponse.createBySuccess(loginUser);
+        }
         return ServerResponse.createByErrorMessage("账号密码错误");
     }
 
     @Override
     public ServerResponse<User> getUserById(int id) {
         return ServerResponse.createBySuccess(userMapper.selectById(id));
+    }
+
+    @Override
+    public ServerResponse delUser(int uid) {
+        int result=userMapper.deleteById(uid);
+        if(result==1)
+            return ServerResponse.createBySuccessMessage("删除成功");
+        else
+            return ServerResponse.createByErrorMessage("删除失败");
+    }
+
+    @Override
+    public ServerResponse updateUserStatus(int uid,int status) {
+        User user=new User(uid,status);
+        int result=userMapper.updateById(user);
+        if(result==1)
+            return ServerResponse.createBySuccessMessage("状态更新成功");
+        else
+            return ServerResponse.createByErrorMessage("状态更新失败");
     }
 
 
@@ -136,4 +166,27 @@ public class UserServiceImpl implements IUserService {
         return 0;
     }
 
+    public Collection<? extends GrantedAuthority> getAuthorities(int userId){
+        User user=userMapper.selectById(userId);
+        List<GrantedAuthority> list=new ArrayList<>();
+        list.add(new GrantedAuthority() {
+            @Override
+            public String getAuthority() {
+                switch (user.getUserType()){
+                    case 1:
+                        return AUTHORITY_ADMIN;
+                    case 2:
+                        return AUTHORITY_USER;
+                    default:
+                        return AUTHORITY_ADMIN;
+                }
+            }
+        });
+        return list;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+        return this.getByEmail(s);
+    }
 }

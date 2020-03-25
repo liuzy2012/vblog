@@ -7,6 +7,8 @@ public class ArticleVo {
     private String title;
     private String content;
     private int cid;
+    private int draft;
+    private String tags;
     private String category;
     private String summary;
     private int uid;
@@ -43,6 +45,22 @@ public class ArticleVo {
 
     public void setCid(int cid) {
         this.cid = cid;
+    }
+
+    public int getDraft() {
+        return draft;
+    }
+
+    public void setDraft(int draft) {
+        this.draft = draft;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 
     public String getCategory() {

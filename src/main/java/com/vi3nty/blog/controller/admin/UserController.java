@@ -11,9 +11,6 @@ import com.vi3nty.blog.utils.BlogUtil;
 import com.vi3nty.blog.utils.RedisKeyUtil;
 import com.vi3nty.blog.utils.ServerResponse;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -62,7 +59,7 @@ public class UserController {
      * 用户post方法提交登录信息
      * @return
      */
-    @PostMapping("/tologin")
+    @PostMapping("/tologin1")
     @ResponseBody
     public ServerResponse<User> login(String email,String password,String kaptcha,@CookieValue("kaptchaOwner") String kaptchaOwner, HttpSession session){
         User user=new User(password,email);
@@ -72,28 +69,27 @@ public class UserController {
             code = (String) redisTemplate.opsForValue().get(redisKey);
             System.out.println("输入的验证码为="+kaptcha+"  系统中验证码为="+code);
             if(StringUtils.equalsIgnoreCase(code,kaptcha)) {
-                //根据用户名和密码创建Token
-                UsernamePasswordToken token = new UsernamePasswordToken(user.getEmail(), user.getPassword());
-                //获取subject认证主体
-                Subject subject = SecurityUtils.getSubject();
                 try {
                     //开始认证
-                    subject.login(token);
                     User loginUser = iUserService.userLogin(user).getData();
                     int unreadNoticeCount=messageService.selectNoticeUnreadedCount(loginUser.getId(),"comment")+messageService.selectNoticeUnreadedCount(loginUser.getId(),"like");
                     session.setAttribute("userlogin", loginUser);
                     session.setAttribute("unreadNoticeCount",unreadNoticeCount);
                     return iUserService.userLogin(user);
                 } catch (Exception e) {
-                    return ServerResponse.createByError();
+                    return ServerResponse.createByErrorCodeMessage(101,"其他错误");
                 }
             }
             else
-                return ServerResponse.createBySuccessMessage("验证码错误");
+                return ServerResponse.createByErrorCodeMessage(102,"验证码错误");
         }
         else {
             return ServerResponse.createByErrorMessage("请输入验证码");
         }
+    }
+    @RequestMapping("/toadd")
+    public String toAddUser(){
+        return "new/admin/pages/member/add";
     }
     @PostMapping("/add")
     @ResponseBody
@@ -135,6 +131,21 @@ public class UserController {
         model.addAttribute("edresp",iUserService.getUserById(id));
         return "admin/admin-edituser";
     }
+
+    @GetMapping("/del/{uid}")
+    @ResponseBody
+    public ServerResponse delUserById(Model model,@PathVariable(name = "uid") int id){
+        return iUserService.delUser(id);
+    }
+    @GetMapping("/update/{uid}/{status}")
+    @ResponseBody
+    public ServerResponse updateUserStatusByadmin(@PathVariable(name = "uid") int uid,@PathVariable(name = "status") int status){
+        if(status==0||status==1){
+            return iUserService.updateUserStatus(uid,status);
+        }
+        return ServerResponse.createByErrorMessage("用户状态代码错误");
+    }
+
     @PostMapping("/update/{uid}")
     @ResponseBody
     public ServerResponse updateUser(HttpServletRequest request,User user,@PathVariable("uid") int id){

@@ -9,6 +9,7 @@ public class CommentVo {
     private int id;
     private String content;
     private String commEmail;
+    private String commAuthor;
     private int aid;
     private String artTitle;
 
@@ -34,6 +35,14 @@ public class CommentVo {
 
     public void setCommEmail(String commEmail) {
         this.commEmail = commEmail;
+    }
+
+    public String getCommAuthor() {
+        return commAuthor;
+    }
+
+    public void setCommAuthor(String commAuthor) {
+        this.commAuthor = commAuthor;
     }
 
     public int getAid() {

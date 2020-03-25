@@ -31,7 +31,8 @@
                 success:function (result) {
                     if(result.status==0){
                         for(var i=0;i<result.data.length;i++){
-                            $("#cate").append("<option value='result.data[i].id'>"+result.data[i].name+"</option>")
+                            var id=result.data[i].id;
+                            $("#cate").append("<option value="+id+">"+result.data[i].name+"</option>");
                         }
                         $("#cate:eq(0)").attr('selected','selected');
                     }
@@ -44,6 +45,7 @@
                 // width  : "100%",
                 height : 640,
                 path   : "/blog/assets/lib/",
+                previewTheme : "dark",
                 imageUpload    : true,
                 imageFormats   : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
                 imageUploadURL : "/blog/admin/article/upload",

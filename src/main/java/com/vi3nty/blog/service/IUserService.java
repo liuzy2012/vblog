@@ -22,6 +22,8 @@ public interface IUserService {
 
     ServerResponse<User> userLogin(User user);
     ServerResponse<User> getUserById(int id);
+    ServerResponse delUser(int uid);
+    ServerResponse updateUserStatus(int uid,int status);
     IPage<User> getUserByPage(int currentPage,int pageSize);
     Role getRole(String email);
     String getPermission(String username);

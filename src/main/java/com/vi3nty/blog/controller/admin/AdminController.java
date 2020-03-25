@@ -25,14 +25,20 @@ public class AdminController {
     public String toindex(){
         return "redirect:/admin/index";
     }
+    //后台首页
     @RequestMapping("/index")
     public String index(){
-        return "admin/admin-index";
+        return "new/admin/index";
+    }
+    //后台首页中欢迎页
+    @RequestMapping("/welcome")
+    public String welcome(){
+        return "new/admin/pages/welcome";
     }
     @RequestMapping("/user")
     public String adminUser(Model model, @RequestParam(name = "currentPage",defaultValue = "1") int currentPage){
         model.addAttribute("userlist",iUserService.getUserByPage(currentPage,PAGE_SIZE));
-        return "admin/admin-user";
+        return "new/admin/pages/member/list";
     }
     @GetMapping("/login")
     public String login(){
@@ -48,7 +54,7 @@ public class AdminController {
     }
     @GetMapping("/topost")
     public String topost(){
-        return "admin/post";
+        return "new/admin/pages/article/addpost";
     }
     @GetMapping("/setting")
     public String setting(Model model){
